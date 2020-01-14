@@ -1,0 +1,179 @@
+<wxs module="myScript">
+  var getLast = function(index, str) {
+    if (index == 0) {
+      return "现在";
+    } else {
+      return str.split(" ")[1];
+    }
+  }
+  var getDailyDate = function(index, seq) {
+    var weekday = ["星期一", "星期二", "星期三", "星期四", "星期五" , "星期六", "星期日"] 
+    if (index == 0) {
+      return "今天";
+    } else {
+      return weekday[(index + seq - 1)%7];
+    }
+  }
+  var windTrans = function(str) {
+    if (str.match("-")) {
+      return str + "级";
+    } else {
+      return str;
+    }
+  }
+  var windDirection = function(str) {
+    if (str.indexOf("东北") != -1) {
+      return "eastnorth";
+    } else if (str.indexOf("东南") != -1) {
+      return "eastsouth";
+    } else if (str.indexOf("西南") != -1) {
+      return "westsouth";
+    } else if (str.indexOf("西北") != -1) {
+      return "westnorth";
+    } else if (str.indexOf("东") != -1) {
+      return "east";
+    } else if (str.indexOf("南") != -1) {
+      return "south";
+    } else if (str.indexOf("西") != -1) {
+      return "west";
+    } else if (str.indexOf("北") != -1) {
+      return "north";
+    } else {
+      return "north";
+    }
+  }
+  var nowBackImage = function(code, temp) {
+    if (code >= 100 && code <= 104) {
+      if (temp > 35) {
+        return "sun2";
+      } else {
+        return "sun";
+      }
+    } else if (code >= 105 && code <= 213) {
+      return "cloud";
+    } else if (code >= 300 && code <= 313) {
+      return "rain";
+    } else if (code >= 400 && code <= 407) {
+      return "snow";
+    } else if (code >= 500 && code <= 508) {
+      return "smog";
+    } else {
+      return "sun";
+    }
+  }
+  module.exports.getLast = getLast;
+  module.exports.getDailyDate = getDailyDate;
+  module.exports.windTrans = windTrans;
+  module.exports.windDirection = windDirection;
+  module.exports.nowBackImage = nowBackImage;
+</wxs>
+<view class='backgroundView'>
+    <view class='content'>
+      <view class='topView'>
+        <image src='../img/{{myScript.nowBackImage(nowBackGround[0], nowBackGround[1])}}.png' class='topImg' mode='aspectFill'></image>
+        <view class='location' bindtap='chooseLocation'>
+          <view>
+            <image class='locationImg' src='../img/location.png' mode='aspectFit'></image>
+            <text >{{location}}</text>
+          </view>
+        </view>
+        <view class='nowTemp'>{{nowTemperature}}</view>
+        <view class='nowCondition'>{{nowCondition}}</view>
+        <view class='nowWind'>{{nowWind}}</view>
+        <view class='air_now'>{{nowAir}}</view>
+        <view class='air_main'>{{main}}</view>
+        <view class='week'>Today | {{week}}</view>
+      </view>
+      <scroll-view class='hourly' scroll-x="true">
+        <block wx:for="{{hourlyArr}}" wx:key="unique" style="display: block;">
+          <view class='oneHourly'>
+            <view class='oneHourlyFlex'>
+              <view class='hourlyDate'>{{myScript.getLast(index, item.time)}}</view> 
+              <image class='hourlyImg' src='../img/{{item.cond_code}}.png' mode='aspectFit'></image>
+              <view class='hourlyTmp'>{{item.tmp}}°</view>
+              <view class='hourlyWind'>
+                <text>{{item.wind_dir}}</text>
+              </view>
+              <view class='hourlyWind'>
+                <text>{{myScript.windTrans(item.wind_sc)}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+      <scroll-view class='density' scroll-x="true">
+      <view class='lifeStyle'>
+        <view class='life'>
+          <image class='airImg' src='../img/pm10.png' mode='aspectFit'></image>
+          <view class='airText'>{{density[0]}}</view>
+        </view>
+        <view class='life'>
+          <image class='airImg' src='../img/pm25.png' mode='aspectFit'></image>
+          <view class='airText'>{{density[1]}}</view>
+        </view>
+        <view class='life'>
+          <image class='airImg' src='../img/no2.png' mode='aspectFit'></image>
+          <view class='airText'>{{density[2]}}</view>
+        </view>
+        <view class='life'>
+          <image class='airImg' src='../img/so2.png' mode='aspectFit'></image>
+          <view class='airText'>{{density[3]}}</view>
+        </view>
+        <view class='life'>
+          <image class='airImg' src='../img/co.png' mode='aspectFit'></image>
+          <view class='airText'>{{density[4]}}</view>
+        </view>
+      </view>
+      </scroll-view>
+      <view class='dailyForecast'>
+        <block wx:for="{{dailyForecast}}" wx:key="unique" style="display: block;">
+          <view class='daily' style="flex-direction:row;">
+            <view class='dailyDate'>{{myScript.getDailyDate(index,seq)}}</view> 
+            <image class='dailyImg' src='../img/{{item.cond_code_d}}.png' mode='aspectFit'></image> 
+            <view class='dailyCond'>{{item.cond_txt_d}}</view>
+            <view class='dailyTmp'>{{item.tmp_min}} ~ {{item.tmp_max}}°</view>
+          </view>
+        </block>
+      </view>
+      <!--穿衣提示 -->
+      <view class='lifeStyle'>
+        <view class='life'>
+          <image class='lifeImg' src='../img/cold.png' mode='aspectFit'></image>
+          <view class='lifeText'>感冒{{lifeStyle[0].brf}}</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/cloth.png' mode='aspectFit'></image>
+          <view class='lifeText'>室外{{lifeStyle[1].brf}}</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/car.png' mode='aspectFit'></image>
+          <view class='lifeText'>{{lifeStyle[2].brf}}洗车</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/umbrella.png' mode='aspectFit'></image>
+          <view class='lifeText'>紫外线{{lifeStyle[3].brf}}</view>
+        </view>
+      </view>
+            <view class='lifeMore'>
+        <view class='life'>
+          <image class='lifeImg' src='../img/body.png' mode='aspectFit'></image>
+          <view class='lifeText'>体感{{lifeMore[0].brf}}</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/sport.png' mode='aspectFit'></image>
+          <view class='lifeText'>{{lifeMore[1].brf}}运动</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/travel.png' mode='aspectFit'></image>
+          <view class='lifeText'>{{lifeMore[2].brf}}出游</view>
+        </view>
+        <view class='life'>
+          <image class='lifeImg' src='../img/air.png' mode='aspectFit'></image>
+          <view class='lifeText'>空气质量{{lifeMore[3].brf}}</view>
+        </view>
+      </view>
+      <view class='botton'>Copyright © 2020 TimeGarage Inc.</view>
+    </view>
+  <!-- </scroll-view> -->
+  
+</view>
