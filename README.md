@@ -24,11 +24,11 @@
 │   └── Location.png
 ├── pages
 │   ├── img
-│   ├── index	  	     //展示页面
+│   ├── index            //展示页面
 │   │   ├── index.js
 │   │   ├── index.wxml
 │   │   └── index.wxss
-│   └── logs		     //日志输出
+│   └── logs             //日志输出
 │       ├── logs.js
 │       ├── logs.json
 │       ├── logs.wxml
@@ -37,7 +37,7 @@
 ├── sitemap.json
 └── utils
     ├── network.js       
-    └── util.js		     //日期转换
+    └── util.js          //日期转换
 
 ```
 
